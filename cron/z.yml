@@ -2,18 +2,20 @@ tasks:
     cron.build:
         args:
             target_env: ?
+            crontab_file: ? "etc/crontab.txt"
         set:
             build_file: sprintf("crontab.%s.txt", target_env)
         do:
             - echo "APPLICATION_ENV=$(target_env)" > ./$(build_file)
             - echo "ROOT=$$(ssh $(envs[target_env].ssh) "cd $(envs[target_env].root) && pwd")" >> ./$(build_file)
-            - cat etc/crontab.txt >> ./$(build_file)
+            - cat $(crontab_file) >> ./$(build_file)
             - @(if VERBOSE) echo "Generated crontab for $(target_env)"; cat $(build_file)
         yield: build_file
 
     cron.install:
         args:
             target_env: ?
+            crontab_file: ? "etc/crontab.txt"
         pre:
             - @cron.diff
         unless: !confirm("install crontab?")
@@ -23,5 +25,6 @@ tasks:
     cron.diff:
         args:
             target_env: ?
+            crontab_file: ? "etc/crontab.txt"
         do:
             - ssh $(envs[target_env].ssh) "crontab -l" | diff - $(tasks.cron.build) && echo "No differences in content" || true
