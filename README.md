@@ -2,5 +2,6 @@
 
 Provides a set of utilities to easily install and diff cron jobs.
 
-# Maintainer(s)
-* Oskar van Velden <oskar@zicht.nl>
+# Maintainers
+* Philip Bergman <philip@zicht.nl>
+* Michael Roterman <michael@zicht.nl>
