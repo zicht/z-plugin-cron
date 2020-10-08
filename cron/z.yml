@@ -35,4 +35,4 @@ tasks:
             target_env: ?
             crontab_file: ? "etc/crontab.txt"
         do:
-            - ssh $(envs[target_env].ssh) "crontab -l" | diff - $(tasks.cron.build) && echo "No differences in content" || true
+            - ssh $(envs[target_env].ssh) "crontab -l" | diff --unified=2 --label "old on $(target_env)" - --label "new" $(tasks.cron.build) && echo "No differences in content" || true
