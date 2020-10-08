@@ -6,7 +6,15 @@ tasks:
         set:
             build_file: sprintf("crontab.%s.txt", target_env)
         do:
-            - echo "APPLICATION_ENV=$(target_env)" > ./$(build_file)
+            - echo "#" > ./$(build_file)
+            - echo "# This crontab is managed in the project repository, please do not change the crontab on the server manually!" >> ./$(build_file)
+            - echo "# See repository /etc/crontab.txt" >> ./$(build_file)
+            - echo "# Use \`z cron:install $(target_env)\`" >> ./$(build_file)
+            - echo "#" >> ./$(build_file)
+            - echo "# APPLICATION_ENV is used for Symfony <=3" >> ./$(build_file)
+            - echo "APPLICATION_ENV=$(target_env)" >> ./$(build_file)
+            - echo "# APP_ENV is used for Symfony >=4" >> ./$(build_file)
+            - echo "APP_ENV=$(target_env)" >> ./$(build_file)
             - echo "ROOT=$$(ssh $(envs[target_env].ssh) "cd $(envs[target_env].root) && pwd")" >> ./$(build_file)
             - cat $(crontab_file) >> ./$(build_file)
             - @(if VERBOSE) echo "Generated crontab for $(target_env)"; cat $(build_file)
@@ -27,4 +35,4 @@ tasks:
             target_env: ?
             crontab_file: ? "etc/crontab.txt"
         do:
-            - ssh $(envs[target_env].ssh) "crontab -l" | diff - $(tasks.cron.build) && echo "No differences in content" || true
+            - ssh $(envs[target_env].ssh) "crontab -l" | diff --unified=2 --label "old on $(target_env)" - --label "new" $(tasks.cron.build) && echo "No differences in content" || true
