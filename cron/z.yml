@@ -9,7 +9,7 @@ tasks:
             - echo "#" > ./$(build_file)
             - echo "# This crontab is managed in the project repository, please do not change the crontab on the server manually!" >> ./$(build_file)
             - echo "# See repository /etc/crontab.txt" >> ./$(build_file)
-            - echo "# Use \`z cron:install prod\`" >> ./$(build_file)
+            - echo "# Use \`z cron:install $(target_env)\`" >> ./$(build_file)
             - echo "#" >> ./$(build_file)
             - echo "# APPLICATION_ENV is used for Symfony <=3" >> ./$(build_file)
             - echo "APPLICATION_ENV=$(target_env)" >> ./$(build_file)
